@@ -516,14 +516,11 @@ class MultiModalUI:
                 
                 fallback_message += "The Qwen 2.5 Omni model is very new and its multi-modal capabilities in transformers are still evolving. Text-only questions work best for now."
                 
-
                 if str(gen_e):
                     fallback_message += f"\n\nError details: {str(gen_e)}"
                 
-
                 assistant_response = {"role": "assistant", "content": fallback_message}
                 
-
                 new_history = conversation + [assistant_response]
                 display_messages = self.format_messages_for_gradio([conversation[-1], assistant_response])
                 
@@ -547,7 +544,6 @@ class MultiModalUI:
             
             display_messages = self.format_messages_for_gradio([new_history[-2], assistant_response])
             
-
             return new_history, display_messages, None
 
     def process_mm_info(self, conversation, use_audio_in_video=False):
