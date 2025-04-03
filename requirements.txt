@@ -2,7 +2,6 @@ torch>=2.0.0
 torchvision
 gradio>=4.19.0
 soundfile>=0.12.1
-qwen_omni_utils
 accelerate
 pillow>=10.0.0
-decord>=0.6.0
+qwen-omni-utils[decord]
