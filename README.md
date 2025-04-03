@@ -2,6 +2,8 @@
 
 A web user interface for capable of processing text, text-to-speech, and images.
 
+![Qwen2.5-Omni WebUI Preview](qwen25-omni-webui-preview.png)
+
 ## Installation
 
 1. Clone this repository
@@ -21,7 +23,7 @@ python -m venv multimodal-env
 .\multimodal-env\Scripts\activate
 
 # Linux/macOS
-source multimodal/bin/activate
+source multimodal-env/bin/activate
 ```
 
 3. Install the required packages:
