@@ -91,7 +91,6 @@ def ensure_audio_tensor_format(audio_data):
             return audio_tensor
             
         return audio_data
-    
     except Exception as e:
         print(f"Error ensuring audio tensor format: {e}")
         return audio_data
@@ -139,7 +138,6 @@ def process_audio_with_audio_module(audio_path, use_audio_in_video=False):
         print(f"Falling back to librosa for audio processing")
         audio_data, _ = librosa.load(audio_path, sr=16000, mono=True)
         return audio_data
-        
     except Exception as e:
         print(f"Error processing audio with audio module: {e}")
         traceback.print_exc()
@@ -208,7 +206,6 @@ class MultiModalUI:
             self.model = Qwen2_5OmniModel.from_pretrained(MODEL_NAME, **model_kwargs)
             
             print("Qwen 2.5 Omni model loaded successfully!")
-            
         except Exception as e:
             print(f"Error loading Qwen 2.5 Omni model: {e}")
             import traceback
@@ -479,7 +476,6 @@ class MultiModalUI:
 
                     with NamedTemporaryFile(suffix=".wav", delete=False) as f:
                         output_audio_path = f.name
-                        
                     try:
                         if hasattr(audio, "audio_array") and audio.audio_array is not None:
                             audio_array = audio.audio_array.cpu().numpy()
@@ -525,10 +521,10 @@ class MultiModalUI:
                 display_messages = self.format_messages_for_gradio([conversation[-1], assistant_response])
                 
                 return new_history, display_messages, None
-                
         except Exception as e:
 
             print(f"Error in generate_response: {e}")
+
             traceback_str = traceback.format_exc()
             print(f"Traceback: {traceback_str}")
             
@@ -620,16 +616,17 @@ class MultiModalUI:
                     )
                 else:
                     print("Creating text-only inputs")
+
                     inputs = self.processor(
                         text=text,
                         return_tensors="pt"
                     )
-                
                 inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
                 
                 return text, inputs
             else:
                 print("qwen_omni_utils not available, using simple text processing")
+
                 text = self.processor.apply_chat_template(
                     conversation, 
                     add_generation_prompt=True, 
@@ -640,11 +637,9 @@ class MultiModalUI:
                     text=text,
                     return_tensors="pt"
                 )
-                
                 inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
                 
                 return text, inputs
-                
         except Exception as e:
             print(f"Error in process_mm_info: {e}")
             traceback_str = traceback.format_exc()
@@ -798,7 +793,6 @@ class MultiModalUI:
                     else:
                         formatted_messages.append({"role": "assistant", "content": str(content)})
             return formatted_messages
-            
         except Exception as e:
             print(f"Error in format_messages_for_gradio: {e}")
             traceback_str = traceback.format_exc()
