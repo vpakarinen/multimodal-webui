@@ -1,6 +1,6 @@
-# Multimodal Web UI for Qwen 2.5 Omni
+# Multimodal Web UI
 
-A web user interface for capable of processing text, speech, and images.
+A simple web user interface for capable of processing text, speech, and image.
 
 ![Qwen2.5-Omni WebUI Preview](multimodal-webui-preview.png)
 
