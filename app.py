@@ -350,10 +350,9 @@ class MultiModalUI:
                             try:
                                 image_path = content["image"]
                                 if os.path.exists(image_path):
-                                    # First load with PIL and resize
                                     pil_image = Image.open(image_path)
-                                    # Process using our helper function with correct method names
                                     image_data = process_image_with_vision_module(pil_image)
+                                    
                                     print(f"Processed image with helper function: {type(image_data)}")
                             except Exception as e:
                                 print(f"Error loading image: {e}")
