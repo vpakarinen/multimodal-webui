@@ -42,7 +42,7 @@ python app.py
 
 The application will automatically download the following files if they don't exist:
 - **Qwen 2.5 Omni 7B model files** (~14GB): The model weights and configuration files.
-- **qwen-omni-utils package**: Official utilities for processing multi-modal inputs for the Qwen 2.5 Omni model.
+- **qwen-omni-utils package**: Official utilities for processing multi-modal inputs.
 - **Additional model components**: Tokenizers, processors, and other dependencies.
 
 ## Notes
