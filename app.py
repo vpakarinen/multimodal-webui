@@ -197,12 +197,17 @@ class MultiModalUI:
                 "trust_remote_code": True
             }
             
-            print("Flash Attention is disabled via environment variable. Model will choose an appropriate attention mechanism.")
+            if USE_FLASH_ATTENTION and is_flash_attn_available():
+                print("Flash Attention is enabled. This should improve performance on compatible GPUs.")
+                os.environ["TRANSFORMERS_NO_FLASH_ATTN"] = "0"
+            else:
+                print("Flash Attention is disabled. Model will choose an appropriate attention mechanism.")
+                os.environ["TRANSFORMERS_NO_FLASH_ATTN"] = "1"
+                
             print(f"Loading processor from {MODEL_NAME}...")
             self.processor = Qwen2_5OmniProcessor.from_pretrained(MODEL_NAME, trust_remote_code=True)
             
             print(f"Loading model from {MODEL_NAME}...")
-            os.environ["TRANSFORMERS_NO_FLASH_ATTN"] = "1"
             self.model = Qwen2_5OmniModel.from_pretrained(MODEL_NAME, **model_kwargs)
             
             print("Qwen 2.5 Omni model loaded successfully!")
