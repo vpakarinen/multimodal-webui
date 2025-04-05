@@ -54,7 +54,6 @@ The application will automatically download the following files if they don't ex
 ## Notes
 - Latest development version of ``transformers`` is required to run this model
 - Audio and video input support will be coming in future updates
-- For optimal performance, consider enabling Flash Attention 2
 
 ## Sponsor
 
