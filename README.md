@@ -44,6 +44,10 @@ pip install git+https://github.com/huggingface/transformers@f742a644ca32e65758c3
 python app.py
 ```
 
+## How to Use Flash Attention
+- ``pip install flash-attn``
+- set USE_FLASH_ATTENTION to true from app.py
+
 ## Required Files
 
 The application will automatically download the following files if they don't exist:
