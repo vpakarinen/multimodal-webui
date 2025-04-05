@@ -32,7 +32,13 @@ source multimodal-env/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Run the application:
+4. Install transformers
+
+```bash
+pip install git+https://github.com/huggingface/transformers@f742a644ca32e65758c3adb36225aef1731bd2a8
+```
+
+5. Run the application:
 
 ```bash
 python app.py
