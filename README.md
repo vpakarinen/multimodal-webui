@@ -6,7 +6,7 @@ A simple web user interface for capable of processing text, speech, and image.
 
 ## Installation
 
-1. Clone this repository
+1. Clone this repository:
 
 ```bash
 git https://github.com/vpakarinen/multimodal-webui.git
