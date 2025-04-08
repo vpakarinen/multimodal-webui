@@ -245,29 +245,10 @@ class MultiModalUI:
                     {"role": "system", "content": SYSTEM_PROMPT}
                 ]
             else:
-                conversation = []
-                for h_msg in history:
-                    if not isinstance(h_msg, tuple) or len(h_msg) != 2:
-                        continue
-                    
-                    user_part, assistant_part = h_msg
-                    if user_part is None or assistant_part is None:
-                        continue
-                    
-                    if isinstance(user_part, str) and user_part.strip():
-                        conversation.append({
-                            "role": "user", 
-                            "content": [{"type": "text", "text": user_part.strip()}]
-                        })
-                    
-                    if isinstance(assistant_part, str) and assistant_part.strip():
-                        conversation.append({
-                            "role": "assistant", 
-                            "content": assistant_part.strip()
-                        })
-                
-                if not any(msg.get("role") == "system" for msg in conversation):
-                    conversation.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
+                conversation = [{"role": "system", "content": SYSTEM_PROMPT}]
+                for msg in history:
+                    if isinstance(msg, dict) and "role" in msg and "content" in msg:
+                        conversation.append(msg)
             
             user_content = []
             
@@ -498,8 +479,8 @@ class MultiModalUI:
                         output_audio_path = None
                 
                 assistant_response = {"role": "assistant", "content": assistant_message}
-                new_history = conversation + [assistant_response]
-                display_messages = self.format_messages_for_gradio([conversation[-1], assistant_response])
+                new_history = history + [{"role": "user", "content": user_message}, assistant_response]
+                display_messages = self.format_messages_for_gradio(new_history)
                 
                 return new_history, display_messages, output_audio_path
                 
@@ -524,8 +505,8 @@ class MultiModalUI:
                 
                 assistant_response = {"role": "assistant", "content": fallback_message}
                 
-                new_history = conversation + [assistant_response]
-                display_messages = self.format_messages_for_gradio([conversation[-1], assistant_response])
+                new_history = history + [{"role": "user", "content": user_message}, assistant_response]
+                display_messages = self.format_messages_for_gradio(new_history)
                 
                 return new_history, display_messages, None
         except Exception as e:
@@ -539,7 +520,7 @@ class MultiModalUI:
             assistant_response = {"role": "assistant", "content": error_message}
             
             if 'conversation' in locals() and conversation:
-                new_history = conversation + [assistant_response]
+                new_history = conversation + [{"role": "assistant", "content": error_message}]
             else:
                 user_content = [{"type": "text", "text": user_message or "Hello"}]
                 user_msg = {"role": "user", "content": user_content}
@@ -682,6 +663,55 @@ class MultiModalUI:
             
             return text, inputs
 
+    def format_messages_for_gradio(self, messages):
+        """Format messages for display in Gradio UI."""
+        try:
+            if messages is None:
+                print("Warning: messages is None in format_messages_for_gradio")
+                return []
+                
+            formatted_messages = []
+            
+            for message in messages:
+                if not isinstance(message, dict):
+                    print(f"Warning: skipping non-dict message: {type(message)}")
+                    continue
+                    
+                role = message.get("role", "")
+                content = message.get("content", "")
+                
+                if role == "system":
+                    continue
+                
+                if role == "user":
+                    if isinstance(content, list):
+                        text_items = [item for item in content if isinstance(item, dict) and item.get("type") == "text"]
+                        if text_items:
+                            display_text = text_items[0].get("text", "")
+                        else:
+                            display_text = "(Image or Audio Input)"
+                    else:
+                        display_text = str(content)
+                    
+                    formatted_messages.append({"role": "user", "content": display_text})
+                
+                elif role == "assistant":
+                    if isinstance(content, list):
+                        text_content = " ".join([
+                            item.get("text", "") 
+                            for item in content 
+                            if isinstance(item, dict) and item.get("type") == "text"
+                        ])
+                        formatted_messages.append({"role": "assistant", "content": text_content})
+                    else:
+                        formatted_messages.append({"role": "assistant", "content": str(content)})
+            return formatted_messages
+        except Exception as e:
+            print(f"Error in format_messages_for_gradio: {e}")
+            traceback_str = traceback.format_exc()
+            print(f"Traceback: {traceback_str}")
+            return []
+
     def extract_assistant_message(self, generated_text, prompt_text):
         """Extract the assistant's message from the generated text."""
         try:
@@ -756,55 +786,6 @@ class MultiModalUI:
                 cleaned_text = cleaned_text[len(artifact):].lstrip()
         
         return cleaned_text
-
-    def format_messages_for_gradio(self, messages):
-        """Format messages for display in Gradio UI."""
-        try:
-            if messages is None:
-                print("Warning: messages is None in format_messages_for_gradio")
-                return []
-                
-            formatted_messages = []
-            
-            for message in messages:
-                if not isinstance(message, dict):
-                    print(f"Warning: skipping non-dict message: {type(message)}")
-                    continue
-                    
-                role = message.get("role", "")
-                content = message.get("content", "")
-                
-                if role == "system":
-                    continue
-                
-                if role == "user":
-                    if isinstance(content, list):
-                        text_items = [item for item in content if isinstance(item, dict) and item.get("type") == "text"]
-                        if text_items:
-                            display_text = text_items[0].get("text", "")
-                        else:
-                            display_text = "(Image or Audio Input)"
-                    else:
-                        display_text = str(content)
-                    
-                    formatted_messages.append({"role": "user", "content": display_text})
-                
-                elif role == "assistant":
-                    if isinstance(content, list):
-                        text_content = " ".join([
-                            item.get("text", "") 
-                            for item in content 
-                            if isinstance(item, dict) and item.get("type") == "text"
-                        ])
-                        formatted_messages.append({"role": "assistant", "content": text_content})
-                    else:
-                        formatted_messages.append({"role": "assistant", "content": str(content)})
-            return formatted_messages
-        except Exception as e:
-            print(f"Error in format_messages_for_gradio: {e}")
-            traceback_str = traceback.format_exc()
-            print(f"Traceback: {traceback_str}")
-            return []
 
 def create_demo():
     """Create the Gradio demo."""
@@ -887,7 +868,7 @@ def create_demo():
                     print(f"Warning: Very large history detected ({len(history)} messages), resetting to empty")
                     history = []
                 
-                if image_input is not None:
+                if image_input is not None and os.path.exists(image_input):
                     print("Multimedia input detected, creating fresh conversation")
                     history = []
 
@@ -901,9 +882,13 @@ def create_demo():
                     except Exception as e:
                         print(f"Error loading image: {e}")
                 
+                # Create a simple user message object
+                current_user_message = message
+                
                 print(f"Calling generate_response with message={message}, direct_image={direct_image is not None}, history_len={len(history)}")
-                new_history, display_messages, audio_path = ui.generate_response(message, direct_image, None, history)
+                new_history, display_messages, audio_path = ui.generate_response(current_user_message, direct_image, None, history)
             
+                # Return the updated state
                 return "", image_input, new_history, display_messages, audio_path
             except Exception as e:
                 traceback_str = traceback.format_exc()
