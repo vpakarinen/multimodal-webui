@@ -2,7 +2,7 @@
 
 A simple web user interface for capable of processing text, speech, and image.
 
-![Qwen2.5-Omni WebUI Preview](multimodal-webui-preview.png)
+![Qwen2.5-Omni WebUI Preview](multimodal-webui-preview-2.png)
 
 ## Installation
 
