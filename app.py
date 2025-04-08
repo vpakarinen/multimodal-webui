@@ -166,6 +166,7 @@ class MultiModalUI:
         self.conversation_history = []
         self.temperature = 0.7
         self.max_new_tokens = 512
+        self.voice_type = "Chelsie"
         self.load_model()
     
     def reset_state(self):
@@ -410,6 +411,7 @@ class MultiModalUI:
                         do_sample=True,
                         temperature=self.temperature,
                         max_new_tokens=self.max_new_tokens,
+                        spk=self.voice_type,
                     )
                 except Exception as e:
                     print(f"Error in generation: {e}")
@@ -429,6 +431,7 @@ class MultiModalUI:
                             do_sample=True,
                             temperature=self.temperature,
                             max_new_tokens=self.max_new_tokens,
+                            spk=self.voice_type,
                         )
                     except Exception as e2:
                         print(f"Error in backup generation: {e2}")
@@ -836,6 +839,14 @@ def create_demo():
                     with gr.Tab("Video"):
                         gr.Markdown("## Video Input (Coming Soon)")
                         video_input = gr.State(None)
+                
+                with gr.Accordion("Voice Settings", open=False):
+                    voice_selector = gr.Radio(
+                        choices=["Chelsie (Female)", "Ethan (Male)"],
+                        value="Chelsie (Female)",
+                        label="Select Voice",
+                        info="Choose the voice for generated speech"
+                    )
 
                 chat_interface = gr.Chatbot(
                     height=500,
@@ -859,9 +870,13 @@ def create_demo():
 
                 audio_output = gr.Audio(type="filepath", label="Generated Speech", visible=True)
         
-        def on_submit(message, image_input, history):
+        def on_submit(message, image_input, voice_choice, history):
             """Process user input and generate a response."""
-            print(f"on_submit called: message={message}, image_path={image_input}, history={len(history) if history else 0}")
+            print(f"on_submit called: message={message}, image_path={image_input}, voice={voice_choice}, history={len(history) if history else 0}")
+            
+            voice_name = voice_choice.split(" ")[0]
+            ui.voice_type = voice_name
+            print(f"Using voice: {ui.voice_type}")
             
             try:
 
@@ -904,13 +919,13 @@ def create_demo():
         
         submit_btn.click(
             on_submit,
-            inputs=[msg, image_input, chatbot_state],
+            inputs=[msg, image_input, voice_selector, chatbot_state],
             outputs=[msg, image_input, chatbot_state, chat_interface, audio_output],
         )
         
         msg.submit(
             on_submit,
-            inputs=[msg, image_input, chatbot_state],
+            inputs=[msg, image_input, voice_selector, chatbot_state],
             outputs=[msg, image_input, chatbot_state, chat_interface, audio_output],
         )
         
