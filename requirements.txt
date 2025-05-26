@@ -1,5 +1,5 @@
-torch>=2.0.0
-torchaudio>=2.0.0
+torch
+torchaudio
 torchvision
 gradio>=4.19.0
 soundfile>=0.12.1
